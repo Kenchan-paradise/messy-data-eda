@@ -33,6 +33,9 @@ In this research, the standardised data of "**Self_efficacy**" is substracted by
 
 `df['Confidence_gap'] = z(df['Self-efficacy]) - z(df[Information_skills])`
 
+Q. Why standardise *before* subtracting?<br />
+A. **Self_efficacy** runs between 0 and 1 and **Information_skills** runs roughly between 0 and 2. So, sbtracting the raw values would be unfair.
+
 ## 2. Compute the covariance matrix
 - Calculate a sequre matrix showing how every feature in the dataset relates or varies with every other feature.
 
