@@ -27,7 +27,7 @@ where...
 - "µ" is the mean of independent features
 - "σ" is the standard deviation of independent features
 
-In this research, the standardised data of "**Self_efficacy**" is substracted by the standardised data of "**Information_skills**", which reveals the "**Conficence_gap**" to suggests if teachers over- or underestimate their digital skills.
+In this research, the standardised data of ``Self_efficacy`` is substracted by the standardised data of ``Information_skills``, which reveals the ``Conficence_gap`` to suggests if teachers over- or underestimate their digital skills.
 
 `df['Confidence_gap'] = z(df['Self-efficacy]) - z(df[Information_skills])`
 
@@ -37,7 +37,7 @@ The result reads as follows:
 - **Near 0**: Self-perseption matches the test.
 
 Q. Why standardise *before* subtracting?<br />
-A. **Self_efficacy** runs between 0 and 1 and **Information_skills** runs roughly between 0 and 2. So, sbtracting the raw values would be unfair.
+A. ``Self_efficacy`` runs between 0 and 1 and ``Information_skills`` runs roughly between 0 and 2. So, sbtracting the raw values would be unfair.
 
 ## 2. Compute the covariance matrix
 - Calculate a sequre matrix showing how every feature in the dataset relates or varies with every other feature.
