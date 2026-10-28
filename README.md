@@ -51,9 +51,28 @@ Need for a decision:K-means clustering and PCA in scikit-learn cannot handle mis
 2. Leave those teachers out of the clustering. I chose this option. Only teachers with values in all three clustering variables are used (**Complete-case analysis**).
 
 `cluster_df = df.dropna(subset=ICT_FEATURES).copy()`
+- ``ICT_FEATURES`` is the list containing ``Self_efficacy``, ``Digital_activity``, and ``Information_skills``.
+- ``.dropna(subset=ICT_FEATURES)`` removes every row that is blank in any of those three columns. Blanks in other columns (like ``Inservice_training``) don't matter here, because that column isn't being clustered.
+- This also removes the 7 teachers missing ``Digital_activity``, without a seperate step.
+- ``.copy()``makes an independent table. Without it, pandas may warn when I add the ``cluster``column to ``cluster_df``, which is used later.
+
 `print(f"Rows used for clustering: {len(cluster_df)} of {len(df)}")`
+- Rows used for clustering: **2650** of **4959**
+
 `X = cluster_df[ICT_FEATURES]`
+- `X` is the same table with only the three clustering columns. Now there are two tables: ``X`` and ``cluster_df``.
+- ``X``goes into scaling, PCA and K-means clusteirng, which should see only the clustering variables.
+- ``cluster_df`` keeps all colums (``Age``, ``Gender``, ``Teacher_type`` etc...)
+
 `X.isnull().sum().sum()`
+- Safety check. The first ``.sum()`` counts missing values per column, and the second adds those counts together. The result must be 0.
+
+#### Check who are lost
+``df['In_clustering'] = df.index.isin(cluster_df.index)``
+- ``cluster_df.index``holds the row lables of the kept teachers. ``.isin(...)`` returns ``True`` for each teacher in ``df`` whose lable is in that list, so I get a new column marking who was clustered. This works because row lables were reset after dropping duplicates.
+
+``df.groupby('In_clustering')[['Age', 'Information_skills', 'Digital_activity']].mean().round(2)``
+This compares the average of each variable for kept vs. left-out teachers. It uses only variables that are filled in for almost everyone, so the comparison is fair.
 
 ## 3. Perform eigen decomposition
 - Find the **eigenvalues** and **eigenvectors** of the covariance matrix. The eigenvectors define the new directional axes (**principal components**), and the eigenvalues measure the amount of variance captured by each axis.
