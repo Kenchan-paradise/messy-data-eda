@@ -11,9 +11,15 @@ Practice real-world data cleaning on a genuinely messy dataset, then use k-means
 
 ## Principal Component Analysis (PCA)
 
-# Standardise and conter the data
+# 1. Standardise and conter the data
 - Subtract the mean of each feature so the data is centered at zero, and scale features (often by dividing by the standard deviation) so variable with larger units do not dominate.
+
+z = lambda s: (s - s.mean()) / s.std()
+
+represents...
 
 $$
 Z=\frac{X-µ}{σ}
 $$
+
+# 2. Compute the covariance matrix
