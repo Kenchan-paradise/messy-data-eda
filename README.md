@@ -12,7 +12,7 @@ Practice real-world data cleaning on a genuinely messy dataset, then use k-means
 # Principal Component Analysis (PCA)
 
 
-## 1. Standardise and conter the data
+## 1. Standardise and center the data
 - Subtract the mean of each feature so the data is centered at zero, and scale features (often by dividing by the standard deviation) so variable with larger units do not dominate.
 
 `z = lambda s: (s - s.mean()) / s.std()`
