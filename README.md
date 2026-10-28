@@ -72,7 +72,7 @@ Need for a decision:K-means clustering and PCA in scikit-learn cannot handle mis
 - ``cluster_df.index``holds the row lables of the kept teachers. ``.isin(...)`` returns ``True`` for each teacher in ``df`` whose lable is in that list, so I get a new column marking who was clustered. This works because row lables were reset after dropping duplicates.
 
 ``df.groupby('In_clustering')[['Age', 'Information_skills', 'Digital_activity']].mean().round(2)``
-This compares the average of each variable for kept vs. left-out teachers. It uses only variables that are filled in for almost everyone, so the comparison is fair.
+- This compares the average of each variable for kept vs. left-out teachers. It uses only variables that are filled in for almost everyone, so the comparison is fair.
 
 ## 3. Perform eigen decomposition
 - Find the **eigenvalues** and **eigenvectors** of the covariance matrix. The eigenvectors define the new directional axes (**principal components**), and the eigenvalues measure the amount of variance captured by each axis.
