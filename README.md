@@ -22,4 +22,13 @@ $$
 Z=\frac{X-µ}{σ}
 $$
 
+where...
+- "µ" is the mean of independent features
+- "σ" is the standard deviation of independent features
+
+
+
+In this research, the standardised data of "Self_efficacy" is substracted by the standardised data of "Information_skills", which reveals the "Conficence_gap" to suggests if teachers over- or underestimate their digital skills.
+df['Confidence_gap'] = z(df['Self-efficacy]) - z(df[Information_skills])
+
 # 2. Compute the covariance matrix
