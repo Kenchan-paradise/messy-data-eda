@@ -14,7 +14,7 @@ Practice real-world data cleaning on a genuinely messy dataset, then use k-means
 # 1. Standardise and conter the data
 - Subtract the mean of each feature so the data is centered at zero, and scale features (often by dividing by the standard deviation) so variable with larger units do not dominate.
 
-z = lambda s: (s - s.mean()) / s.std()
+`z = lambda s: (s - s.mean()) / s.std()`
 
 represents...
 
