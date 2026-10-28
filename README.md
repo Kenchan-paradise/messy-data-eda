@@ -42,6 +42,14 @@ A. **Self_efficacy** runs between 0 and 1 and **Information_skills** runs roughl
 ## 2. Compute the covariance matrix
 - Calculate a sequre matrix showing how every feature in the dataset relates or varies with every other feature.
 
+Specifically in this research, I did two things to prepare the dataset for PCA: selecting the teachers and columns that can be clustered, and it checks who was left out.
+
+
+`cluster_df = df.dropna(subset=ICT_FEATURES).copy()`
+`print(f"Rows used for clustering: {len(cluster_df)} of {len(df)}")`
+`X = cluster_df[ICT_FEATURES]`
+`X.isnull().sum().sum()`
+
 ## 3. Perform eigen decomposition
 - Find the **eigenvalues** and **eigenvectors** of the covariance matrix. The eigenvectors define the new directional axes (**principal components**), and the eigenvalues measure the amount of variance captured by each axis.
 
