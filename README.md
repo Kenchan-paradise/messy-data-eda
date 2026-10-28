@@ -29,6 +29,7 @@ where...
 
 
 In this research, the standardised data of "Self_efficacy" is substracted by the standardised data of "Information_skills", which reveals the "Conficence_gap" to suggests if teachers over- or underestimate their digital skills.
-df['Confidence_gap'] = z(df['Self-efficacy]) - z(df[Information_skills])
+
+`df['Confidence_gap'] = z(df['Self-efficacy]) - z(df[Information_skills])`
 
 # 2. Compute the covariance matrix
