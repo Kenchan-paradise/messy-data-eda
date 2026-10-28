@@ -42,8 +42,13 @@ A. **Self_efficacy** runs between 0 and 1 and **Information_skills** runs roughl
 ## 2. Compute the covariance matrix
 - Calculate a sequre matrix showing how every feature in the dataset relates or varies with every other feature.
 
-Specifically in this research, I did two things to prepare the dataset for PCA: selecting the teachers and columns that can be clustered, and it checks who was left out.
+Specifically in this research, I did two things to prepare the dataset for PCA: 
+- selecting the teachers and columns that can be clustered, 
+- and it checks who was left out.
 
+Need for a decision:K-means clustering and PCA in scikit-learn cannot handle missing values. Even if one `NaN` is in the data, they stop with an error. In this dataset, about **46%** of teachers are bland in `Self_efficacy`, so there is a need for deciding what to do with them. The options are...<br />
+1. Fill the blanks (imputation).
+2. Leave those teachers out of the clustering. I chose this option. Only teachers with values in all three clustering variables are used (**Complete-case analysis**).
 
 `cluster_df = df.dropna(subset=ICT_FEATURES).copy()`
 `print(f"Rows used for clustering: {len(cluster_df)} of {len(df)}")`
