@@ -9,9 +9,10 @@ Practice real-world data cleaning on a genuinely messy dataset, then use k-means
 - **The missingness has a pattern**. The two columns are blank together for most of those rows, and those teachers differ from the rest (e.g. older, lower information-skills scores). That suggests these questions weren't answered or asked for a whole subgroup (the cause is likely structural, such as a different questionnaire version or round, but verify in the source documentation). It is not random noise, so filling blanks with the median would be inventing data for nearly half the sample.
 - **29 exact duplicate rows**, with no ID column to tell whether they're double submissions or coincidentally identical teachers.
 
-## Principal Component Analysis (PCA)
+# Principal Component Analysis (PCA)
 
-# 1. Standardise and conter the data
+
+## 1. Standardise and conter the data
 - Subtract the mean of each feature so the data is centered at zero, and scale features (often by dividing by the standard deviation) so variable with larger units do not dominate.
 
 `z = lambda s: (s - s.mean()) / s.std()`
@@ -32,4 +33,14 @@ In this research, the standardised data of "**Self_efficacy**" is substracted by
 
 `df['Confidence_gap'] = z(df['Self-efficacy]) - z(df[Information_skills])`
 
-# 2. Compute the covariance matrix
+## 2. Compute the covariance matrix
+- Calculate a sequre matrix showing how every feature in the dataset relates or varies with every other feature.
+
+## 3. Perform eigen decomposition
+- Find the **eigenvalues** and **eigenvectors** of the covariance matrix. The eigenvectors define the new directional axes (**principal components**), and the eigenvalues measure the amount of variance captured by each axis.
+
+## 4. Select feature vectors
+- Sort the eigenvectors by their corresponding eigenvalues from highest to lowest, and choose the top k eigenvectors that capture the desired amount of total variance.
+
+## 5. Project the data
+- Multiply the original standardized dataset by the matrix of selected eigenvectors to transform the data into the new lower-dimensional subspace.
