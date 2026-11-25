@@ -15,7 +15,9 @@ Practice real-world data cleaning on a genuinely messy dataset, then use k-means
 ### 1. Standardise and centre the data
 - Subtract the mean of each feature so the data is centred at zero, and scale features (often by dividing by the standard deviation) so variable with larger units do not dominate.
 
-`z = lambda s: (s - s.mean()) / s.std()`
+```
+z = lambda s: (s - s.mean()) / s.std()
+```
 
 represents a ***z-score***...
 
@@ -29,7 +31,9 @@ where...
 
 In this research, the standardised data of ``Self_efficacy`` is substracted by the standardised data of ``Information_skills``, which reveals the ``Conficence_gap`` to suggests if teachers over- or underestimate their digital skills.
 
-`df['Confidence_gap'] = z(df['Self-efficacy]) - z(df[Information_skills])`
+```
+df['Confidence_gap'] = z(df['Self-efficacy]) - z(df[Information_skills])
+```
 
 The result reads as follows:
 - **Positive**: The teacher rates themself higher (relative to other teachers) than their test score of information skills suggests.
@@ -40,7 +44,8 @@ Q. Why standardise *before* subtracting?<br />
 A. ``Self_efficacy`` runs between 0 and 1 and ``Information_skills`` runs roughly between 0 and 2. So, sbtracting the raw values would be unfair.
 
 ### 2. Compute the covariance matrix
-- Calculate a sequre matrix showing how every feature in the dataset relates or varies with every other feature.
+#### Build the clustering matrix
+This step calculates a sequre matrix showing how every feature in the dataset relates or varies with every other feature.
 
 Specifically in this research, I did two things to prepare the dataset for PCA: 
 - selecting the teachers and columns that can be clustered, 
@@ -50,28 +55,40 @@ Need for a decision:K-means clustering and PCA in scikit-learn cannot handle mis
 1. Fill the blanks (imputation).
 2. Leave those teachers out of the clustering. I chose this option. Only teachers with values in all three clustering variables are used (**Complete-case analysis**).
 
-`cluster_df = df.dropna(subset=ICT_FEATURES).copy()`
+```
+cluster_df = df.dropna(subset=ICT_FEATURES).copy()
+```
 - ``ICT_FEATURES`` is the list containing ``Self_efficacy``, ``Digital_activity``, and ``Information_skills``.
 - ``.dropna(subset=ICT_FEATURES)`` removes every row that is blank in any of those three columns. Blanks in other columns (like ``Inservice_training``) don't matter here, because that column isn't being clustered.
 - This also removes the 7 teachers missing ``Digital_activity``, without a seperate step.
 - ``.copy()``makes an independent table. Without it, pandas may warn when I add the ``cluster``column to ``cluster_df``, which is used later.
 
-`print(f"Rows used for clustering: {len(cluster_df)} of {len(df)}")`
+```
+print(f"Rows used for clustering: {len(cluster_df)} of {len(df)}")
+```
 - Rows used for clustering: **2650** of **4959**
 
-`X = cluster_df[ICT_FEATURES]`
+```
+X = cluster_df[ICT_FEATURES]
+```
 - `X` is the same table with only the three clustering columns. Now there are two tables: ``X`` and ``cluster_df``.
 - ``X``goes into scaling, PCA and K-means clusteirng, which should see only the clustering variables.
 - ``cluster_df`` keeps all colums (``Age``, ``Gender``, ``Teacher_type`` etc...)
 
-`X.isnull().sum().sum()`
+```
+X.isnull().sum().sum()
+```
 - Safety check. The first ``.sum()`` counts missing values per column, and the second adds those counts together. The result must be 0.
 
 #### Check who are lost
-``df['In_clustering'] = df.index.isin(cluster_df.index)``
+```
+df['In_clustering'] = df.index.isin(cluster_df.index)
+```
 - ``cluster_df.index``holds the row lables of the kept teachers. ``.isin(...)`` returns ``True`` for each teacher in ``df`` whose lable is in that list, so I get a new column marking who was clustered. This works because row lables were reset after dropping duplicates.
 
-``df.groupby('In_clustering')[['Age', 'Information_skills', 'Digital_activity']].mean().round(2)``
+```
+df.groupby('In_clustering')[['Age', 'Information_skills', 'Digital_activity']].mean().round(2)
+```
 - This compares the average of each variable for kept vs. left-out teachers. It uses only variables that are filled in for almost everyone, so the comparison is fair.
 
 #### Scale
@@ -79,42 +96,85 @@ Need for a decision:K-means clustering and PCA in scikit-learn cannot handle mis
 
 **Whythere's not train/test split?**: Unlike the machine learning using the dataset of Titanic passengers, there's nothing to predict. It instead explore the structure of the data, so fitting on all of it is correct.<br />
 
-``scaler = StandardScaler()``<br />
-``X_scaled = scaler.fit_transform(X)``
+```
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+```
 - K-means clustering (distance-based) and PCA (variance-based) are distorted by differing scales. So standard scaling Normalisation is applied in the data.
 
 #### PCA
 PCA looks at the three clustering variables and builds **new axes** from them. Each new axis, called a **principal component (PC)**, is a weighted mix of the original variables. The axes are ordered so that <ins>PC1 captures the most variation between teachers</ins>, PC2 the next most, and so on.
 In this project, PCA is mainly for **understanding** and **plotting**.<br />
-##### a. how much variation does each component hold?<br />
+##### a. How much variation does each component hold?<br />
 
-``pca_full = PCA().fit(X_scaled)``<br />
+```
+pca_full = PCA().fit(X_scaled)
+```
 - ``PCA()`` with no arguments keeps all components. This time 3.<br />
 - ``.fit(X_scaled)`` learns the components. It does not transform the data. It returns the fitted object, which is stored as ``pca_full``, so you can read its learned values.<br />
 
-``print(pca_full.explained_variance_ratio_.round(3))``<br />
+```
+print(pca_full.explained_variance_ratio_.round(3))
+```
 - ``explaned_variance_ratio_`` is an array of 3 numbers, one per component, in dscending order, adding up to 1.
-- Each number is <ins>**the share of total variation**</ins> that component holds. For example, ``0.60`` would mean PC1 holds **60%**.
- $$\text{Share of Total Variation} = \frac{\text{Variation from Component}}{\text{Total Variation}}$$
+- Each number is <ins>**the share of total variation**</ins> that component holds. For example, ``0.60`` would mean PC1 holds **60%**.<br />
+$$\text{Share of Total Variation} = \frac{\text{Variation from Component}}{\text{Total Variation}}$$
 - Because the data are standardised, each variable contributes variance 1, so the total is 3. A ratio of 0.60 means that component holds **0.60 * 3 = 1.8** units of it.
 
-``plt.plot(range(1, len(ICA_feature) + 1), np.cumsum(pca_full.explaned_variance_ratio_), marker='o')``<br />
+```
+plt.plot(range(1, len(ICA_feature) + 1), np.cumsum(pca_full.explaned_variance_ratio_), marker='o')
+```
 - **x values:**``len(ICT_FEATURES)`` is 3, so ``range(1, 4)`` gives x positions 1, 2, 3.
 - **y values:**``np.cumsum`` turns ``[a, b, c]`` into ``[a, a+b, a+b+c]``. The y value at x=2 is therefore the share captured by the first two components together, and at x=3 it's 1.0. (The last value is always 1.0.)
 - ``marker='o'`` draws a dot at each point, so three distinct values can be seen rather than a continuous line.
 - For example, ``np.cumsum([2, 5, 3])`` gives ``[2, 7, 10]``. ``pca_full.explained_variance_ratio_`` is the share of total variation each component holds, which shows ``[0.55, 0.30, 0.15]``. Therefore, ``np.cumsum([0.55, 0.30, 0.15])`` gives ``[0.55, 0.85, 1.00]``.
 
-``plt.xlable('Number of components')``<br />
-``plt.ylable('Cumulative explained variance')``<br />
-``plt.savefig('pca_variance.png')``<br />
-``plt.show()``<br />
+```
+plt.xlable('Number of components')
+plt.ylable('Cumulative explained variance')
+plt.savefig('pca_variance.png')
+plt.show()
+```
 - These label the axes, save the plot as an image, and display it.
 - It can be read like: if the curve s already high at x =2, a 2D picture loses little information.
 
 
-##### b. what does each component represent<br />
+##### b. What does each component represent? (the loadings)<br />
+
+```
+loadings = pd.DataFrame(
+    pca_full.components_.T,
+    columns=[f'PC{i + 1}' for i in range(len(ICT_FEATURES))],
+    index=ICT_FEATURES
+)
+loadings.round(2)
+```
+- ``pca_full.components_`` is a table with one **row per component** and one **column per variable**. Row 0 holds the weights that define PC1.
+- ``.T`` **(transpose)** <ins>flips it so rows are variables and columns are components</ins>, which reads more naturally.
+- ``columns=[f'PC{i + 1}' ...]`` is a list comprehension producing ``['PC1', 'PC2', 'PC3']``.
+- ``index=ICT_FEATURES`` labels each row with the variable it belongs to.
+
+How to read the table...<br />
+PC 1 = (weight) * scaled ``Self_efficacy`` + (weight) * scaled ``Digital_activity`` + (weight) * scaled ``Information_skills``
+- **Same sign on all variables** => the component is a "general level" axis: high scores on all of the mgo together.
+- **Mixed signs** => the component is a contrast: people high on some variables and low on others.
+- **Larger absolute value** => that variable matters more for that component. 
+- **The overall sign is arbitrary.** PCA could flip every sign in a column and describe the same axis. Interpret the relative pattern, never the sign alone. (Hypothetical example: Loadings of +0.6, +0.6, -0.5 mean the component contrasts the first two variables against the thrid.)
+
+Terminologies:<br />
+- **Linear combination (weighted sum)**: the general mathematical name. PC1 is a linear combination (weighted sum) of the scaled variables. For example, a linear combination can be represented like this... <br />
+$$\text{Linear Combination} = (w_1 \cdot x_1) + (w_2 \cdot x_2) + (w_3 \cdot x_3)$$
+- **Component weights, coefficients or eigenvectors**:terms for the weights themselves. In **scikit-learn** they are stored in ``pca_full.components_``. Each row is one component, which is why it's alled an eignenvector (a direction in the space of your variables).
+- **Loadings**: The word mostly used for <ins>the weighted value in a column of the same table</ins>. 
+
 
 ##### c. Drawing a 2D coordinate for each teacher<br />
+```
+pca2 = PCA(n_components=2)
+X_pca = pca2.fit_transform(X_scaled)
+print(f"Variance captured by 2 components: {pca2.explained_variance_ratio_.sum():.1%}")
+```
+- PCA gives the same components every time on the same data, so the first two components here match the first two in ``pca_full``. Refitting is just a convenient way to get the 2D coordinates.
 
 
 ### 3. Perform eigen decomposition
