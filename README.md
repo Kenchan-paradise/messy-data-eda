@@ -20,7 +20,7 @@ Practice real-world data cleaning on a genuinely messy dataset, then use k-means
 represents a ***z-score***...
 
 $$
-\Zeta=\frac{\Chi-\mu}{\sigma}
+Z=\frac{X-\mu}{\sigma}
 $$
 
 where...
