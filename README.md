@@ -84,7 +84,8 @@ Need for a decision:K-means clustering and PCA in scikit-learn cannot handle mis
 - K-means clustering (distance-based) and PCA (variance-based) are distorted by differing scales. So standard scaling Normalisation is applied in the data.
 
 #### PCA
-PCA in this research is mainly for **understanding** and **plotting**.<br />
+PCA looks at the three clustering variables and builds **new axes** from them. Each new axis, called a **principal component (PC)**, is a weighted mix of the original variables. The axes are ordered so that <ins>PC1 captures the most variation between teachers</ins>, PC2 the next most, and so on.
+In this project, PCA is mainly for **understanding** and **plotting**.<br />
 ##### a. how much variation does each component hold?<br />
 
 ``pca_full = PCA().fit(X_scaled)``<br />
