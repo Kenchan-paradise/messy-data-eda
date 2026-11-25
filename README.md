@@ -118,7 +118,11 @@ print(pca_full.explained_variance_ratio_.round(3))
 ```
 - ``explaned_variance_ratio_`` is an array of 3 numbers, one per component, in dscending order, adding up to 1.
 - Each number is <ins>**the share of total variation**</ins> that component holds. For example, ``0.60`` would mean PC1 holds **60%**.<br />
-$$\text{Share of Total Variation} = \frac{\text{Variation from Component}}{\text{Total Variation}}$$
+
+$$
+\text{Share of Total Variation} = \frac{\text{Variation from Component}}{\text{Total Variation}}
+$$
+
 - Because the data are standardised, each variable contributes variance 1, so the total is 3. A ratio of 0.60 means that component holds **0.60 * 3 = 1.8** units of it.
 
 ```
@@ -163,7 +167,11 @@ PC 1 = (weight) * scaled ``Self_efficacy`` + (weight) * scaled ``Digital_activit
 
 Terminologies:<br />
 - **Linear combination (weighted sum)**: the general mathematical name. PC1 is a linear combination (weighted sum) of the scaled variables. For example, a linear combination can be represented like this... <br />
-$$\text{Linear Combination} = (w_1 \cdot x_1) + (w_2 \cdot x_2) + (w_3 \cdot x_3)$$
+
+$$
+\text{Linear Combination} = (w_1 \cdot x_1) + (w_2 \cdot x_2) + (w_3 \cdot x_3)
+$$
+
 - **Component weights, coefficients or eigenvectors**:terms for the weights themselves. In **scikit-learn** they are stored in ``pca_full.components_``. Each row is one component, which is why it's alled an eignenvector (a direction in the space of your variables).
 - **Loadings**: The word mostly used for <ins>the weighted value in a column of the same table</ins>. 
 
