@@ -17,10 +17,10 @@ Practice real-world data cleaning on a genuinely messy dataset, then use k-means
 
 `z = lambda s: (s - s.mean()) / s.std()`
 
-represents...
+represents a ***z-score***...
 
 $$
-Z=\frac{X-µ}{σ}
+\Zeta=\frac{\Chi-\mu}{\sigma}
 $$
 
 where...
@@ -83,20 +83,37 @@ Need for a decision:K-means clustering and PCA in scikit-learn cannot handle mis
 ``X_scaled = scaler.fit_transform(X)``
 - K-means clustering (distance-based) and PCA (variance-based) are distorted by differing scales. So standard scaling Normalisation is applied in the data.
 
+#### PCA
 PCA in this research is mainly for **understanding** and **plotting**.<br />
-a. how much of the variation each component holds<br />
+##### a. how much variation does each component hold?<br />
 
 ``pca_full = PCA().fit(X_scaled)``<br />
+- ``PCA()`` with no arguments keeps all components. This time 3.<br />
+- ``.fit(X_scaled)`` learns the components. It does not transform the data. It returns the fitted object, which is stored as ``pca_full``, so you can read its learned values.<br />
+
 ``print(pca_full.explained_variance_ratio_.round(3))``<br />
+- ``explaned_variance_ratio_`` is an array of 3 numbers, one per component, in dscending order, adding up to 1.
+- Each number is <ins>**the share of total variation**</ins> that component holds. For example, ``0.60`` would mean PC1 holds **60%**.
+ $$\text{Share of Total Variation} = \frac{\text{Variation from Component}}{\text{Total Variation}}$$
+- Because the data are standardised, each variable contributes variance 1, so the total is 3. A ratio of 0.60 means that component holds **0.60 * 3 = 1.8** units of it.
+
 ``plt.plot(range(1, len(ICA_feature) + 1), np.cumsum(pca_full.explaned_variance_ratio_), marker='o')``<br />
+- **x values:**``len(ICT_FEATURES)`` is 3, so ``range(1, 4)`` gives x positions 1, 2, 3.
+- **y values:**``np.cumsum`` turns ``[a, b, c]`` into ``[a, a+b, a+b+c]``. The y value at x=2 is therefore the share captured by the first two components together, and at x=3 it's 1.0. (The last value is always 1.0.)
+- ``marker='o'`` draws a dot at each point, so three distinct values can be seen rather than a continuous line.
+- For example, ``np.cumsum([2, 5, 3])`` gives ``[2, 7, 10]``. ``pca_full.explained_variance_ratio_`` is the share of total variation each component holds, which shows ``[0.55, 0.30, 0.15]``. Therefore, ``np.cumsum([0.55, 0.30, 0.15])`` gives ``[0.55, 0.85, 1.00]``.
+
 ``plt.xlable('Number of components')``<br />
 ``plt.ylable('Cumulative explained variance')``<br />
 ``plt.savefig('pca_variance.png')``<br />
-``plt.show()``
+``plt.show()``<br />
+- These label the axes, save the plot as an image, and display it.
+- It can be read like: if the curve s already high at x =2, a 2D picture loses little information.
 
-b. what each component represents<br />
 
-c. Drawing a 2D coordinate for each teacher<br />
+##### b. what does each component represent<br />
+
+##### c. Drawing a 2D coordinate for each teacher<br />
 
 
 ### 3. Perform eigen decomposition
