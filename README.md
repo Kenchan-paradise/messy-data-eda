@@ -193,3 +193,30 @@ print(f"Variance captured by 2 components: {pca2.explained_variance_ratio_.sum()
 
 ### 5. Project the data
 - Multiply the original standardized dataset by the matrix of selected eigenvectors to transform the data into the new lower-dimensional subspace.
+
+#### K-means: choose K with two methods
+K-means groups teachers so that those in the same group are close together and those in different groups are far apart.
+
+```
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
+```
+- ``KMeans`` is the clustering class. 
+- ``silhouette_score`` is a function that rates cluster quality.
+
+```
+inertia, sil = [], []
+ks = range(2, 9)
+```
+- Two empty lists will collect the results.
+- ``ks`` is the K values to try: 2, 3, ..., 8. It starts at 2 because 1 cluster is meaningless, and the silhouette score is underfined with only one cluster.
+
+```
+for k in ks:
+    km = Kmeans(n_clusters=k, random_state=42, n_init=10)
+    labels = km.fit_predict(X_scaled)
+```
+- ``n_clusters=k`` is how manygroups to find.
+- ``random_state=42`` fixes the randomness of the starting centres so the results are the same every run.
+- ``n_init=10`` runs the whole algorithm 10 times from different random starts and keeps the best run. This guards against a poor starting position.
+- ``fit_predict`` finds the clusters and returns an array of labels (one per teacher, in the same row order as X_scaled). 
