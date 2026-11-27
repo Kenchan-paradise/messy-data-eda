@@ -240,5 +240,15 @@ plt.show()
 ![Inertia and Silhouette plots](choose_k.png)
 
 #### How to read the two plots
-- **Inertia (left)**: inertia always falls, and analysis can be made when the fall staps steeply, which is called "elbow". with 
-- **Silhouette (right)**: higher is better. It's often highest at K=2, which isn't necessarily the most useful answer. Rules of thumb for interpretation vary, but scores below about 0.25 to 0.4 generally mean the groups overlap, so teachers vary along a continuum rather than forming distinct types.
+- **Inertia (left)**: inertia always falls, and analysis can be made when the fall staps steeply, which is called "elbow". with survey-type data the curve is often smooth with no obvious bend.
+- **Silhouette (right)**: higher is better. It's often highest at K=2, which isn't necessarily the most useful answer. Rules of thumb for interpretation vary, but <ins>scores below about 0.25 to 0.4 generally mean the groups overlap</ins>, so teachers vary along a continuum rather than forming distinct types.
+
+```
+K = 3
+kmeans = Kmeans(cNclusters=K, random_state=42, n_init=10)
+cluster_df['cluster'] = kmeans.fit_predict(X_scaled)
+cluster_df['cluster'].value_counts().sort_index()
+```
+- ``K = 3`` is your decision from the plots. Treat the value as a starting point and try 3 and 4.
+- ``fit_predict(X_scaled)`` gives each teacher a lable (0, 1 or 2). Assigning it to a new column ``cluster``in ``cluster_df`` works because ``cluster_df``and ``X_scaled`` have the same teachers in the same order.
+- ``value_counts().sort_index()`` counts how many teachers are in each cluster. Check that no cluster is tiny. A very small one may be a handful of unusal teachers rather than a real profile.
