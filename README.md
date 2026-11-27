@@ -220,3 +220,25 @@ for k in ks:
 - ``random_state=42`` fixes the randomness of the starting centres so the results are the same every run.
 - ``n_init=10`` runs the whole algorithm 10 times from different random starts and keeps the best run. This guards against a poor starting position.
 - ``fit_predict`` finds the clusters and returns an array of labels (one per teacher, in the same row order as X_scaled). 
+
+```
+inertia.append(km.inertia_)
+sil.append(silhouette_score(X_scaled, labels))
+```
+- **Inertia**: the total squared distance from every teacher to their own cluster's centre. <ins>Smaller means tighter clusters.</ins> It always drops as K grows (with K = number of teachers, it would be 0), so a low inertia alone doesn't mean a good K.
+- **Silhouette score**: for each teacher, it compares <ins>the average distance to their own cluster **"a"**</ins> with <ins>the average distance to the *nearest other* cluster **"b"**</ins>, as (b - a) / max(a,b). Then it averages over everyone. It ranges from -1 to 1: near 1 means teachers sit clearly inside their cluster, near 0 means they sit on the boarder between clusters, an negative means they're probably in the wrong one.
+
+```
+fig, ax = plt.subplots(1, 2, figsize=(11, 4))
+ax[0].plot(ks, inertia, marker='o'); ax[0].set_title('Inertia')
+as[1].plot(ks, sil, marker='o'); ax[1].set_title('Silhouette score')
+plt.savefit('choose_k.png')
+plt.show()
+```
+- This draws two side-by-side plots, one for each measure against K, and saves the figure image.
+
+![Inertia and Silhouette plots](choose_k.png)
+
+#### How to read the two plots
+- **Inertia (left)**: inertia always falls, and analysis can be made when the fall staps steeply, which is called "elbow". with 
+- **Silhouette (right)**: higher is better. It's often highest at K=2, which isn't necessarily the most useful answer. Rules of thumb for interpretation vary, but scores below about 0.25 to 0.4 generally mean the groups overlap, so teachers vary along a continuum rather than forming distinct types.
